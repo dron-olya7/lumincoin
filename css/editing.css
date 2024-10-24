@@ -1,0 +1,165 @@
+body {
+  overflow-x: hidden;
+}
+
+.section {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.link {
+  padding: 40px 71px 20px 50px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.link img {
+  width: 98px;
+}
+
+.sidebar {
+  border-right: 1px solid #d9d9d9;
+  height: 1024px;
+}
+
+.list,
+.nav-item {
+  width: 100%;
+}
+
+.list {
+  padding: 60px 20px 0;
+}
+
+.form-select {
+  cursor: pointer;
+}
+
+.nav-item {
+  border-radius: 5px;
+  height: 40px;
+}
+
+.nav-item:hover {
+  background-color: #0d6efd;
+}
+
+.nav-item:hover svg > path,
+.nav-item:hover span {
+  fill: #fff;
+  color: #fff;
+}
+
+.nav-item span {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.41px;
+  color: #052c65;
+}
+
+.dropdown {
+  padding: 20px 0 40px 20px;
+  border-top: 1px solid #d9d9d9;
+  width: 100%;
+}
+
+.human-names {
+  color: #052c65;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  margin-left: 16px;
+}
+.log-out {
+  width: 178px !important;
+}
+
+.row > * {
+  padding: 0;
+}
+
+.main {
+  padding: 100px 0 0 60px;
+  width: 1221px;
+}
+
+h2 {
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 46.88px;
+  color: #052c65;
+  margin-bottom: 40px;
+}
+.dropdown-toggle {
+  color: #052c65;
+  font-size: 14px;
+  font-weight: 400 !important;
+  line-height: 16.41px;
+  text-align: left;
+}
+.dropdown-menu.show {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+.dropdown-menu.show li a {
+  height: 40px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.41px;
+  color: #0d6efd;
+  padding: 12px 16px 0;
+}
+.dropdown-menu.show li a:hover {
+  background-color: #0d6efd;
+  color: #fff;
+}
+.balance {
+  padding-left: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.balance p {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16.41px;
+  color: #052c65;
+  margin: 0;
+  margin-right: 10px;
+}
+.balance span {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16.41px;
+  color: #0d6efd;
+}
+
+.form-control {
+  width: 397px;
+  height: 38px;
+  margin-bottom: 20px;
+}
+
+.form-control::placeholder {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #6c757d;
+}
+
+.btn {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16.41px;
+  padding: 11px 16px;
+}
+
+.btn.btn-success {
+  margin-right: 6px;
+  width: 88px;
+  height: 38px;
+}
+
+.btn.btn-danger {
+  width: 83px;
+  height: 38px;
+}

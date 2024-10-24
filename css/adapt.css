@@ -1,0 +1,117 @@
+@media (max-width: 1024px) {
+  .section {
+    height: 100%;
+  }
+  .sidebar {
+    height: 180vh !important;
+    position: relative;
+    background-color: #fff;
+  }
+  .header__burger-btn {
+    display: block !important;
+  }
+  .col-auto {
+    position: absolute;
+    top: 0;
+    left: -350px;
+    transition: transform 5s;
+  }
+  .col-auto.open .header__burger-btn {
+    position: fixed;
+    left: 100%;
+  }
+  .col-auto.open {
+    transform: translateX(100%);
+    left: -230px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    height: 100%;
+  }
+  .col-auto.open .header__burger-btn span:nth-child(1) {
+    transform: translateY(0) rotate(45deg);
+  }
+  .col-auto.open .header__burger-btn span:nth-child(2) {
+    opacity: 0;
+  }
+  .col-auto.open .header__burger-btn span:nth-child(3) {
+    transform: translateY(0) rotate(-45deg);
+  }
+  .main {
+    padding: 80px 40px 0 40px !important;
+  }
+  .main__date__periods {
+    margin-bottom: 100px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    margin-bottom: 10px;
+  }
+  .interval {
+    margin-bottom: 0;
+  }
+  .budget {
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px 0 0 !important;
+  }
+
+  .line {
+    display: none;
+  }
+  form {
+    width: 100%;
+    padding: 0 10px;
+  }
+  .input-group {
+    width: 100%;
+  }
+  .btn {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+  .income {
+    padding-bottom: 30px;
+  }
+  .expenses {
+    border-top: 1px solid #d9d9d9;
+    padding-top: 30px;
+  }
+  .items .item {
+    height: 100%;
+    width: 100%;
+  }
+  .main .form-control {
+    width: 100%;
+  }
+  .table-scroll{
+    overflow-x: scroll;
+  }
+  #popup {
+    max-width: 90%;
+  }
+  .popup__btn .btn.btn-success {
+    margin-right: 12px !important;
+}
+}
+
+@media (max-width: 600px) {
+  .header__burger-btn {
+    left: 80% !important;
+  }
+  .myChart_income,
+  .myChart_expenses,
+  .myChart_income canvas,
+  .myChart_expenses canvas {
+    width: 100% !important;
+  }
+  #col-auto {
+    height: 100%;
+  }
+  .col-auto.open .header__burger-btn {
+    left: 100% !important;
+  }
+  .balance {
+    margin-left: -85px;
+  }
+}
