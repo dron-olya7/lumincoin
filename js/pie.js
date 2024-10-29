@@ -1,4 +1,4 @@
-const income = document.getElementById('myChart_income');
+const income = $('#myChart_income');
 
 new Chart(income, {
   type: 'pie',
@@ -13,7 +13,7 @@ new Chart(income, {
  
 });
 
-const expenses = document.getElementById('myChart_expenses');
+const expenses = $('#myChart_expenses');
 
 new Chart(expenses, {
   type: 'pie',

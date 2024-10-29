@@ -1,8 +1,8 @@
-let burger = document.getElementById("burger");
-let sidebar = document.getElementById("col-auto");
+let burger = $("#burger");
+let sidebar = $("#col-auto");
 
-document.addEventListener("DOMContentLoaded", function(){
-    burger.addEventListener("click", function(){
-        sidebar.classList.toggle("open");
+$(document).ready(function(){
+    $(burger).on("click", function(){
+        $(sidebar).toggleClass("open");
     })
 })
