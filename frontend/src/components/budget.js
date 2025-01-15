@@ -1,7 +1,6 @@
 import {Operations} from "../services/operations.js";
 import {Balance} from "../services/balance.js";
 
-
 export class Budget {
     constructor() {
         this.title = document.getElementById('content-title');

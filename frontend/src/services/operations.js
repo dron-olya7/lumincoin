@@ -5,7 +5,6 @@ export class Operations {
     static refreshTokenKey = 'refreshToken';
     static refreshToken = localStorage.getItem(this.refreshTokenKey);
 
-
     static async getOperations(period, dateFrom, dateTo) {
         if (this.refreshToken) {
             if (dateFrom && dateTo && period) {

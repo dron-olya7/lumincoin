@@ -6,7 +6,6 @@ export class Exp {
     static refreshToken = localStorage.getItem(this.refreshTokenKey);
 
 
-
     static async getExpense() {
         if (this.refreshToken) {
             const response = await fetch(config.host + '/categories/expense', {

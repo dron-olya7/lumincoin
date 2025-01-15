@@ -13,7 +13,6 @@ export class Router {
         this.contentElement = document.getElementById('app');
         this.titleElement = document.getElementById('title');
         this.balance = document.getElementById('balance');
-        // sidebar
 
         this.routes = [
             {

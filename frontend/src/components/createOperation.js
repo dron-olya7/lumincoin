@@ -2,7 +2,6 @@ import {Exp} from "../services/expense.js";
 import {Inc} from "../services/income.js";
 import {Operations} from "../services/operations.js";
 
-
 export class CreateOperation {
     constructor() {
         this.type = document.getElementById(`type`);
@@ -19,11 +18,9 @@ export class CreateOperation {
 
     async getCategory() {
         if (this.type.value === 'expense') {
-            const cat = await Exp.getExpense();
-            this.category = cat;
+            this.category = await Exp.getExpense();
         } else if (this.type.value === 'income') {
-            const cat = await Inc.getIncome();
-            this.category = cat;
+            this.category = await Inc.getIncome();
         }
         const category = document.getElementById('category');
         category.innerHTML = `

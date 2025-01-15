@@ -4,7 +4,6 @@ export class Balance {
     static refreshTokenKey = 'refreshToken';
     static refreshToken = localStorage.getItem(this.refreshTokenKey);
 
-
     static async getBalance() {
         if (this.refreshToken) {
             const response = await fetch(config.host + '/balance', {

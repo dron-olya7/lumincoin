@@ -5,7 +5,6 @@ export class Inc {
     static refreshTokenKey = 'refreshToken';
     static refreshToken = localStorage.getItem(this.refreshTokenKey);
 
-
     static async getIncome() {
         if (this.refreshToken) {
             const response = await fetch(config.host + '/categories/income', {

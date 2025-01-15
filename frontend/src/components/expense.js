@@ -177,7 +177,7 @@ export class Expense {
             this.categorysExpense = await Exp.getExpense();
             this.cancelFunc();
             popup.remove();
-            this.updateBalance();
+            await this.updateBalance();
         });
 
         btnCancel.onclick = (() => {
