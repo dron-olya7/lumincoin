@@ -1,0 +1,54 @@
+<div class="wrapper" id="wrapper">
+    <div class="main-content" id="main-content">
+        <h1 class="content-title" id="content-title">Доходы и Расходы</h1>
+        <div class="budget-content content-items" id="budget-content">
+            <div class="item-btns">
+                <div class="item-btn">
+                    <button class="btn btn-create bg-success" id="create-income">
+                        Создать доход
+                    </button>
+                </div>
+                <div class="item-btn">
+                    <button class="btn bg-danger btn-delete" id="create-expense">
+                        Создать расход
+                    </button>
+                </div>
+            </div>
+            <div class="buget-content-filter">
+                <div class="item-btns tabs">
+                    <div class="item-tabs active" id="today">
+                        Сегодня
+                    </div>
+                    <div class="item-tabs" id="week">
+                        Неделя
+                    </div>
+                    <div class="item-tabs" id="month">
+                        Месяц
+                    </div>
+                    <div class="item-tabs" id="year">
+                        Год
+                    </div>
+                    <div class="item-tabs" id="all">
+                        Все
+                    </div>
+                    <div class="item-tabs" id="interval">
+                        Интервал
+                    </div>
+                    <div class="item-tabs-date">
+                        <span>c</span>
+                        <input class="tabs-input" type="text" placeholder=" Дата" onfocus="(this.type='date')"
+                               onblur="(this.type='text')" disabled id="dateFrom">
+                        <span>по</span>
+                        <input class="tabs-input" type="text" placeholder="Дата" disabled onfocus="(this.type='date')"
+                               onblur="(this.type='text')" id="dateTo">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="budget-table" id="budget-not-items">
+
+        </div>
+    </div>
+</div>
+
