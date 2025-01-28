@@ -6,6 +6,7 @@ export class Exp {
     static refreshToken = localStorage.getItem(this.refreshTokenKey);
 
 
+
     static async getExpense() {
         if (this.refreshToken) {
             const response = await fetch(config.host + '/categories/expense', {
@@ -44,7 +45,7 @@ export class Exp {
 
     static async editExpense(itemId, value) {
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/categories/expense/' + itemId, {
+            await fetch(config.host + '/categories/expense/' + itemId, {
                 method: 'PUT',
                 headers: {
                     'Content-type': 'application/json',
@@ -58,7 +59,7 @@ export class Exp {
 
     static async deleteExpense(itemId) {
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/categories/expense/' + itemId, {
+            await fetch(config.host + '/categories/expense/' + itemId, {
                 method: 'DELETE',
                 headers: {
                     'Content-type': 'application/json',
@@ -66,12 +67,19 @@ export class Exp {
                     'x-auth-token': this.refreshToken,
                 },
             });
+            const operations = await Operations.getOperations('all');   
+
+            const filteredOperations = operations.filter(operation => operation.category === undefined);
+            
+            for(const operation of filteredOperations) {
+                await Operations.deleteOperations(operation.id);
+            }
         }
     }
 
     static async createExpense(value) {
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/categories/expense', {
+            await fetch(config.host + '/categories/expense', {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',

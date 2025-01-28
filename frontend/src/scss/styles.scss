@@ -496,3 +496,29 @@ option[value=""][disabled] {
 option {
   color: black;
 }
+
+.item-btns-group{
+  display: flex;
+}
+
+@media (max-width:1280px) {
+  .diagrams {
+    flex-direction: column;
+  }
+  .diagrams-item{
+    margin-bottom: 40px;
+  }
+  .item-btns {
+    flex-direction: column;
+  }
+  .item-tabs-date {
+    margin-top: 12px;
+  }
+}
+
+@media (max-width:1220px) {
+  .item-btns-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

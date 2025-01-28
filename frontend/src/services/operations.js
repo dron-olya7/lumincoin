@@ -5,6 +5,7 @@ export class Operations {
     static refreshTokenKey = 'refreshToken';
     static refreshToken = localStorage.getItem(this.refreshTokenKey);
 
+
     static async getOperations(period, dateFrom, dateTo) {
         if (this.refreshToken) {
             if (dateFrom && dateTo && period) {
@@ -71,7 +72,7 @@ export class Operations {
     }
     static async createOperations(value) {
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/operations', {
+            await fetch(config.host + '/operations', {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',
@@ -84,7 +85,7 @@ export class Operations {
     }
     static async deleteOperations(id) {
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/operations/' + id, {
+            await fetch(config.host + '/operations/' + id, {
                 method: 'DELETE',
                 headers: {
                     'Content-type': 'application/json',
@@ -92,6 +93,7 @@ export class Operations {
                     'x-auth-token': this.refreshToken,
                 },
             });
+          
         }
     }
 }

@@ -36,7 +36,8 @@ export class Main {
         const incomeData = data.filter(i => i.type === 'income').forEach(obj => {
             const a =  inc.find(i => i.category === obj.category);
             if (a) {
-                a.amount = a.amount + obj.amount
+                let amount = a.amount + obj.amount;
+                a.amount = amount
             } else {
                 inc.push({
                     category: obj.category,
@@ -47,7 +48,8 @@ export class Main {
         const expenseData = data.filter(i => i.type === 'expense').forEach(obj => {
          const a =  dec.find(i => i.category === obj.category);
          if (a) {
-             a.amount = a.amount + obj.amount
+             let amount = a.amount + obj.amount;
+             a.amount = amount
          } else {
                     dec.push({
                         category: obj.category,

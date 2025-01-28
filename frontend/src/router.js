@@ -13,6 +13,7 @@ export class Router {
         this.contentElement = document.getElementById('app');
         this.titleElement = document.getElementById('title');
         this.balance = document.getElementById('balance');
+        // sidebar
 
         this.routes = [
             {
@@ -113,6 +114,10 @@ export class Router {
             return;
         }
 
+        if(newRoute.navBar && !Auth.getUserInfo()){
+            window.location.href = "#/login";
+            return;
+        }
 
         this.contentElement.innerHTML = await fetch(newRoute.template).then(response => response.text());
         this.titleElement.innerText = newRoute.title;

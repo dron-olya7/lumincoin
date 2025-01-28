@@ -5,6 +5,7 @@ export class Inc {
     static refreshTokenKey = 'refreshToken';
     static refreshToken = localStorage.getItem(this.refreshTokenKey);
 
+
     static async getIncome() {
         if (this.refreshToken) {
             const response = await fetch(config.host + '/categories/income', {
@@ -58,7 +59,7 @@ export class Inc {
 
     static async deleteIncome(itemId) {
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/categories/income/' + itemId, {
+            await fetch(config.host + '/categories/income/' + itemId, {
                 method: 'DELETE',
                 headers: {
                     'Content-type': 'application/json',
@@ -66,12 +67,19 @@ export class Inc {
                     'x-auth-token': this.refreshToken,
                 },
             });
+            const operations = await Operations.getOperations('all');   
+
+            const filteredOperations = operations.filter(operation => operation.category === undefined);
+            
+            for(const operation of filteredOperations) {
+                await Operations.deleteOperations(operation.id);
+            }
         }
     }
 
     static async createIncome(value) {
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/categories/income', {
+            await fetch(config.host + '/categories/income', {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',

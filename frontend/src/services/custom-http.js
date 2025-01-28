@@ -17,6 +17,7 @@ export class CustomHttp {
             params.headers['x-access-token'] = token;
         }
 
+
         if (body) {
             params.body = JSON.stringify(body);
         }

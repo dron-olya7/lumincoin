@@ -79,7 +79,9 @@ export class EditOperation {
 
         this.categoryId = category[category.selectedIndex].id;
 
-        amount.onchange = (() => {valid();})
+        amount.onchange = (() => {
+            valid();
+        })
         amount.oninput = (() =>{
             amount.value = amount.value.replace(/[^\d]/g, '');
             if (amount.value[0] === '0') {

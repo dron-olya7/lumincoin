@@ -2,6 +2,7 @@ import {Exp} from "../services/expense.js";
 import {Inc} from "../services/income.js";
 import {Operations} from "../services/operations.js";
 
+
 export class CreateOperation {
     constructor() {
         this.type = document.getElementById(`type`);
@@ -18,9 +19,11 @@ export class CreateOperation {
 
     async getCategory() {
         if (this.type.value === 'expense') {
-            this.category = await Exp.getExpense();
+            const cat = await Exp.getExpense();
+            this.category = cat;
         } else if (this.type.value === 'income') {
-            this.category = await Inc.getIncome();
+            const cat = await Inc.getIncome();
+            this.category = cat;
         }
         const category = document.getElementById('category');
         category.innerHTML = `
@@ -103,21 +106,16 @@ export class CreateOperation {
             }
         }
 
-
-
-
-
-
         btnCreate.onclick = (() => {
             if (!comment.value) {
                 comment.value = ' ';
             }
-            if (operations.find(i =>
-                i.amount === +amount.value &&
-                i.category === category.value &&
-                i.comment === comment.value &&
-                i.date === date.value &&
-                i.type === this.type.value
+            if (operations.find(element =>
+                element.amount === +amount.value &&
+                element.category === category.value &&
+                element.comment === comment.value &&
+                element.date === date.value &&
+                element.type === this.type.value
             )) {
                 servErr.style.display = 'block';
             } else {
