@@ -1,0 +1,34 @@
+<div class="wrapper" id="wrapper">
+    <div class="main-content" id="main-content">
+        <h1 class="content-title" id="content-title">Редактирование дохода/расхода</h1>
+        <div class="budget-content content-items" id="budget-content">
+            <div class="content-items create-edit">
+                <div class="input-error" id="input-server-error">Данная операция уже существует</div>
+                <select class="content-input" id="type" required>
+                    <option value="income" id="inc">Доход</option>
+                    <option value="expense" id="exp">Расход</option>
+                </select>
+                <select class="content-input" id="category" required>
+                </select>
+                <input class="content-input" type="text" id="amount" placeholder="Сумма в $...">
+                <input class="content-input" type="text" id="date" placeholder="Дата..." onfocus="(this.type='date')"
+                       onblur="(this.type='text')">
+                <input class="content-input" id="comment" maxlength="60" name="" placeholder="Комментарий...">
+                <div class="item-btns">
+                    <div class="item-btn">
+                        <button class="btn btn-create bg-success" id="btn-save">
+                            Сохранить
+                        </button>
+                    </div>
+                    <div class="item-btn">
+                        <button class="btn bg-danger btn-delete" id="btn-сancel">
+                            Отмена
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
