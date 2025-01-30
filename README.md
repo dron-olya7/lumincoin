@@ -1,5 +1,4 @@
 # lumincoin
-App for accounting of household finances with authorization
 
 ## Get start
 
@@ -20,3 +19,4 @@ npm run start
 cd frontend <br>
 npm install <br>
 npm run dev
+
