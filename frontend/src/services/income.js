@@ -1,5 +1,6 @@
 import config from "../../config/config.js";
 import {Auth} from "./auth";
+import {Operations} from "./operations"; 
 
 export class Inc {
     static refreshTokenKey = 'refreshToken';
