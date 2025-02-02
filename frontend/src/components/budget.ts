@@ -1,12 +1,17 @@
-import {Operations} from "../services/operations.js";
-import {Balance} from "../services/balance.js";
+import {Operations} from "../services/operations";
+import {Balance} from "../services/balance";
 
 
 export class Budget {
+    title: HTMLHeadingElement;
+    content: HTMLElement;
+    wrapper: HTMLElement;
+    budgetOperations: any[];
+
     constructor() {
-        this.title = document.getElementById('content-title');
-        this.content = document.getElementById('budget-content');
-        this.wrapper = document.getElementById('wrapper');
+        this.title = document.getElementById('content-title') as HTMLHeadingElement;
+        this.content = document.getElementById('budget-content') as HTMLElement;
+        this.wrapper = document.getElementById('wrapper') as HTMLElement;
         this.budgetOperations = [];
         this.init('today');
         this.activeFilter();
@@ -14,27 +19,26 @@ export class Budget {
         this.updateBalance();
     }
 
-
-    async init(value, dateFrom, dateTo) {
-        document.getElementById("budget-link").classList.add('active');
+    async init(value: string, dateFrom?: string, dateTo?: string): Promise<void> {
+        document.getElementById("budget-link")!.classList.add('active');
         this.budgetOperations = await Operations.getOperations(value, dateFrom, dateTo);
         this.budgetOperationsField(this.budgetOperations);
     }
 
-    activeFilter() {
-        const today = document.getElementById('today');
-        const week = document.getElementById('week');
-        const month = document.getElementById('month');
-        const year = document.getElementById('year');
-        const all = document.getElementById('all');
-        const interval = document.getElementById('interval');
-        const dateFrom = document.getElementById('dateFrom');
-        const dateTo = document.getElementById('dateTo');
-        const itemTabs = document.getElementsByClassName('item-tabs');
+    activeFilter(): void {
+        const today: HTMLButtonElement = document.getElementById('today') as HTMLButtonElement;
+        const week: HTMLButtonElement = document.getElementById('week') as HTMLButtonElement;
+        const month: HTMLButtonElement = document.getElementById('month') as HTMLButtonElement;
+        const year: HTMLButtonElement = document.getElementById('year') as HTMLButtonElement;
+        const all: HTMLButtonElement = document.getElementById('all') as HTMLButtonElement;
+        const interval: HTMLButtonElement = document.getElementById('interval') as HTMLButtonElement;
+        const dateFrom: HTMLInputElement = document.getElementById('dateFrom') as HTMLInputElement;
+        const dateTo: HTMLInputElement = document.getElementById('dateTo') as HTMLInputElement;
+        const itemTabs: HTMLCollectionOf<Element> = document.getElementsByClassName('item-tabs');
 
-        function check() {
-            [].forEach.call(itemTabs, function (el) {
-                el.classList.remove('active')
+        function check(): void {
+            Array.from(itemTabs).forEach((el): void => {
+                el.classList.remove('active');
             });
             if (!interval.classList.contains('active')) {
                 dateFrom.setAttribute('disabled', 'disabled');
@@ -42,59 +46,65 @@ export class Budget {
             }
         }
 
-        today.onclick = (async () => {
+        today.onclick = async (): Promise<void> => {
             check();
             today.classList.add('active');
             await this.init('today');
-        });
-        week.onclick = (async () => {
+        };
+
+        week.onclick = async (): Promise<void> => {
             check();
-            week.classList.add('active')
+            week.classList.add('active');
             await this.init('week');
-        });
-        month.onclick = (async () => {
+        };
+
+        month.onclick = async (): Promise<void> => {
             check();
-            month.classList.add('active')
+            month.classList.add('active');
             await this.init('month');
-        });
-        year.onclick = (async () => {
+        };
+
+        year.onclick = async (): Promise<void> => {
             check();
-            year.classList.add('active')
+            year.classList.add('active');
             await this.init('year');
-        });
-        all.onclick = (async () => {
+        };
+
+        all.onclick = async (): Promise<void> => {
             check();
-            all.classList.add('active')
+            all.classList.add('active');
             await this.init('all');
-        });
-        interval.onclick = (async () => {
+        };
+
+        interval.onclick = async (): Promise<void> => {
             check();
-            interval.classList.add('active')
+            interval.classList.add('active');
 
             if (dateFrom.value && dateTo.value) {
                 await this.init('interval', dateFrom.value, dateTo.value);
             }
+
             if (interval.classList.contains('active')) {
                 dateFrom.removeAttribute('disabled');
                 dateTo.removeAttribute('disabled');
             }
 
+            dateFrom.onchange = (): void => {
+                if (dateFrom.value && dateTo.value) {
+                    this.init('interval', dateFrom.value, dateTo.value);
+                }
+            };
 
-            dateFrom.onchange = (() => {
+            dateTo.onchange = (): void => {
                 if (dateFrom.value && dateTo.value) {
                     this.init('interval', dateFrom.value, dateTo.value);
                 }
-            })
-            dateTo.onchange = (() => {
-                if (dateFrom.value && dateTo.value) {
-                    this.init('interval', dateFrom.value, dateTo.value);
-                }
-            })
-        });
+            };
+        };
     }
 
-    budgetOperationsField(el) {
-        const d = document.getElementById('budget-not-items');
+    budgetOperationsField(el): void {
+        const d: HTMLElement | null = document.getElementById('budget-not-items');
         if (el.length === 0) {
             d.style.overflow = 'visible';
             d.innerHTML = `
@@ -128,7 +138,7 @@ export class Budget {
                 itemType = 'Расход'
             }
             const count = el.indexOf(item) + 1;
-            const budgetTableTrElement = document.createElement('tr');
+            const budgetTableTrElement: HTMLTableRowElement = document.createElement('tr');
             budgetTableTrElement.className = 'budget-table-tr';
             budgetTableTrElement.innerHTML = `
                         <td class="budget-table-td td-titles">${count}</td>
@@ -160,7 +170,7 @@ export class Budget {
                         </td>
             `;
 
-            const tableNameEl = document.getElementById('budget-table');
+            const tableNameEl: HTMLElement | null = document.getElementById('budget-table');
             tableNameEl.appendChild(budgetTableTrElement);
 
             if (!item.category && item.id) {
@@ -168,24 +178,24 @@ export class Budget {
                 location.href = '#/budget';
             }
 
-            const btnEdit = document.getElementById(`operation-edit-${item.id}`);
-            const btnDelete = document.getElementById(`operation-delete-${item.id}`);
+            const btnEdit: HTMLElement | null = document.getElementById(`operation-edit-${item.id}`);
+            const btnDelete: HTMLElement | null = document.getElementById(`operation-delete-${item.id}`);
 
-            btnEdit.onclick = (() => {
+            btnEdit.onclick = ((): void => {
                 localStorage.setItem('operationId', item.id);
                 location.href = '#/budget/edit-operation';
             });
 
-            btnDelete.onclick = (async () => {
-                const array = [...document.getElementsByClassName("item-tabs")];
+            btnDelete.onclick = (async (): Promise<void> => {
+                const array :any[] = [...document.getElementsByClassName("item-tabs")];
                 const a = array.find(el => el.classList.contains('active'));
                 await this.deleteBudget(item.id, a.id)
             });
         })
     }
 
-    async deleteBudget(itemId, path) {
-        const popupElement = document.createElement('div');
+    async deleteBudget(itemId, path) :Promise<void> {
+        const popupElement :HTMLDivElement = document.createElement('div');
         popupElement.className = 'popup';
         popupElement.setAttribute('id', 'popup');
         popupElement.innerHTML = `
@@ -206,40 +216,42 @@ export class Budget {
         </div>`;
         this.wrapper.appendChild(popupElement);
 
-        const popup = document.getElementById(`popup`);
-        const btnItemDelete = document.getElementById(`btn-item-delete-${itemId}`);
-        const btnCancel = document.getElementById(`btn-item-сancel-${itemId}`);
+        const popup  :HTMLElement|null = document.getElementById(`popup`);
+        const btnItemDelete  :HTMLElement|null = document.getElementById(`btn-item-delete-${itemId}`);
+        const btnCancel  :HTMLElement|null = document.getElementById(`btn-item-сancel-${itemId}`);
 
-        btnItemDelete.onclick = (async () => {
+        btnItemDelete.onclick = (async () :Promise<void> => {
             await Operations.deleteOperations(itemId);
             this.budgetOperations = await Operations.getOperations(path);
-            document.getElementById('budget-table').innerHTML = '';
+            const budgetTable :HTMLElement|null = document.getElementById('budget-table');
+            budgetTable.innerHTML = '';
             this.budgetOperationsField(this.budgetOperations);
             popup.remove();
             await this.updateBalance();
         });
 
-        btnCancel.onclick = (() => {
+        btnCancel.onclick = (() :void => {
             popup.remove();
         })
     }
 
-    async justDelete(itemId) {
+    async justDelete(itemId) :Promise<void> {
         await Operations.deleteOperations(itemId);
         await this.updateBalance();
     }
 
-    createOperation() {
-        const btnCreateIncome = document.getElementById(`create-income`);
-        const btnCreateExpense = document.getElementById(`create-expense`);
+    createOperation() :void {
+        const btnCreateIncome :HTMLElement|null = document.getElementById(`create-income`);
+        const btnCreateExpense :HTMLElement|null = document.getElementById(`create-expense`);
 
-        btnCreateIncome.onclick = (() => location.href = '#/budget/create-operation');
-        btnCreateExpense.onclick = (() => location.href = '#/budget/create-operation');
+        btnCreateIncome.onclick = (() :string => location.href = '#/budget/create-operation');
+        btnCreateExpense.onclick = (() :string => location.href = '#/budget/create-operation');
     }
 
-    async updateBalance() {
+    async updateBalance() :Promise<void> {
         const getBalance = await Balance.getBalance();
-        document.getElementById('balance').innerHTML = `Баланс: <span>${getBalance.balance} $</span>`;
+        const balanceEl :HTMLElement|null = document.getElementById('balance');
+        balanceEl.innerHTML = `Баланс: <span>${getBalance.balance} $</span>`;
     }
 
 }

@@ -1,53 +1,51 @@
-import config from "../../config/config.js";
+import config from "../../config/config";
 
 export class Auth {
-    static accessTokenKey = 'accessToken';
-    static refreshTokenKey = 'refreshToken';
-    static userInfoKey = 'userInfo';
-    static refreshToken = localStorage.getItem(this.refreshTokenKey);
+    static accessTokenKey: string = 'accessToken';
+    static refreshTokenKey: string = 'refreshToken';
+    static userInfoKey: string = 'userInfo';
+    static refreshToken: string | null = localStorage.getItem(this.refreshTokenKey);
 
-    static async processUnauthorizedResponse() {
-        const loginPage =  document.getElementById('has-user-error');
-        // const refreshToken = localStorage.getItem(this.refreshTokenKey);
+    static async processUnauthorizedResponse(): Promise<boolean> {
+        const loginPage: HTMLElement | null = document.getElementById('has-user-error');
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/refresh', {
+            const response: Response = await fetch(config.host + '/refresh', {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify({refreshToken: this.refreshToken})
+                body: JSON.stringify({ refreshToken: this.refreshToken })
             });
             if (response && response.status === 200) {
-                const result = await response.json()
+                const result: any = await response.json();
                 if (result && !result.error) {
                     this.setTokens(result.accessToken, result.refreshToken);
-                    return true
+                    return true;
                 }
             }
         }
         if (location.hash === '#/login') {
-            document.getElementById('has-user-error').style.display = 'block';
-            loginPage.style.display = 'block';
-        } else  {
+            if (loginPage) loginPage.style.display = 'block';
+        } else {
             this.removeTokens();
             location.href = '#/login';
         }
         return false;
     }
 
-    static async logout() {
+    static async logout(): Promise<boolean | undefined> {
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/logout', {
+            const response: Response = await fetch(config.host + '/logout', {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify({refreshToken: this.refreshToken})
+                body: JSON.stringify({ refreshToken: this.refreshToken })
             });
             if (response && response.status === 200) {
-                const result = await response.json()
+                const result: any = await response.json();
                 if (result && !result.error) {
                     Auth.removeTokens();
                     localStorage.removeItem(Auth.userInfoKey);
@@ -57,40 +55,40 @@ export class Auth {
         }
     }
 
-    static async refreshFunc (response, func) {
+    static async refreshFunc(response: Response, func: () => Promise<any>): Promise<any> {
         if (response.status < 200 || response.status >= 300) {
             if (response.status === 401) {
-                const result = await Auth.processUnauthorizedResponse();
+                const result: boolean = await Auth.processUnauthorizedResponse();
                 if (result) {
-                    return await func;
+                    return await func();
                 } else {
                     return null;
                 }
             }
-            throw new Error(response.message);
+            throw new Error(response.statusText);
         }
     }
 
-    static setTokens(accessToken, refreshToken) {
+    static setTokens(accessToken: string, refreshToken: string): void {
         localStorage.setItem(this.accessTokenKey, accessToken);
         localStorage.setItem(this.refreshTokenKey, refreshToken);
     }
 
-    static removeTokens() {
+    static removeTokens(): void {
         localStorage.removeItem(this.accessTokenKey);
         localStorage.removeItem(this.refreshTokenKey);
     }
 
-    static setUserInfo(info) {
+    static setUserInfo(info: any): void {
         localStorage.setItem(this.userInfoKey, JSON.stringify(info));
     }
 
-    static getUserInfo() {
-        const userInfo = localStorage.getItem(this.userInfoKey);
+    static getUserInfo(): any | null {
+        const userInfo: string | null = localStorage.getItem(this.userInfoKey);
         if (userInfo) {
             return JSON.parse(userInfo);
         }
-        return null
+        return null;
     }
-
 }
+

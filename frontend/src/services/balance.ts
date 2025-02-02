@@ -1,13 +1,13 @@
-import config from "../../config/config.js";
+import config from "../../config/config";
 
 export class Balance {
-    static refreshTokenKey = 'refreshToken';
-    static refreshToken = localStorage.getItem(this.refreshTokenKey);
+    static refreshTokenKey :string = 'refreshToken';
+    static refreshToken :string|null = localStorage.getItem(this.refreshTokenKey);
 
 
-    static async getBalance() {
+    static async getBalance() :Promise<any> {
         if (this.refreshToken) {
-            const response = await fetch(config.host + '/balance', {
+            const response :Response = await fetch(config.host + '/balance', {
                 method: 'GET',
                 headers: {
                     'x-auth-token': this.refreshToken,
