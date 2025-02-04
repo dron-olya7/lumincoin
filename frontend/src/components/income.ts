@@ -16,7 +16,7 @@ export class Income {
         this.createIncome();
     }
 
-    async init(): Promise<void> {
+    private async init(): Promise<void> {
         document.getElementById("income-link")?.classList.add('active');
         document.getElementById("category-link")?.setAttribute('aria-expanded', 'true');
         document.getElementById("account-collapse")?.classList.add('show');
@@ -25,7 +25,7 @@ export class Income {
         this.incomeCreateField(this.categorysIncome);
     }
 
-    incomeCreateField(el: any[]): void {
+    private incomeCreateField(el: any[]): void {
         if (this.categorysIncome.length === 0) {
             return;
         }
@@ -66,7 +66,7 @@ export class Income {
         });
     }
 
-    async editIncome(itemId: string): Promise<void> {
+    private async editIncome(itemId: string): Promise<void> {
         const item = await Inc.getIncomeOne(itemId);
         this.title!.innerText = 'Редактирование категории доходов';
         this.content!.innerHTML = `<div class="content-items create-edit">
@@ -122,13 +122,13 @@ export class Income {
         btnCancel.onclick = () => this.cancelFunc();
     }
 
-    async editFunc(itemId: string, value: string): Promise<void> {
+    private async editFunc(itemId: string, value: string): Promise<void> {
         await Inc.editIncome(itemId, value);
         this.categorysIncome = await Inc.getIncome();
         this.cancelFunc();
     }
 
-    cancelFunc(): void {
+    private cancelFunc(): void {
         this.title!.innerText = 'Доходы';
         this.content!.innerHTML = `<div class="content-item create-item" id="create-item">
             <div class="create"><span>+</span></div>
@@ -137,7 +137,7 @@ export class Income {
         this.createIncome();
     }
 
-    async deleteIncome(itemId: string): Promise<void> {
+    private async deleteIncome(itemId: string): Promise<void> {
         const popupElement :HTMLDivElement = document.createElement('div');
         popupElement.className = 'popup';
         popupElement.setAttribute('id', 'popup');
@@ -176,7 +176,7 @@ export class Income {
         };
     }
 
-    async createIncome(): Promise<void> {
+    private async createIncome(): Promise<void> {
         const createElement :HTMLElement|null = document.getElementById('create-item');
         createElement!.onclick = () :void => {
             this.title!.innerText = 'Создание категории доходов';
@@ -242,7 +242,7 @@ export class Income {
         };
     }
 
-    async updateBalance(): Promise<void> {
+    private async updateBalance(): Promise<void> {
         const getBalance = await Balance.getBalance();
         document.getElementById('balance')!.innerHTML = `Баланс: <span>${getBalance.balance} $</span>`;
     }

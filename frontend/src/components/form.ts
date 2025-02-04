@@ -1,19 +1,14 @@
 import { CustomHttp } from "../services/custom-http";
 import { Auth } from "../services/auth";
 import config from "../../config/config";
+import {FieldsForm} from "../types/form.type";
 
 export class Form {
     private readonly rememberMe: boolean;
     private processElement: HTMLElement | null;
     private pass: HTMLInputElement | null;
-    // @ts-ignore
-    private fields: Array<{
-        name: string;
-        id: string;
-        element: HTMLInputElement | null;
-        regex: RegExp;
-        valid: boolean;
-    }>;
+    private fields: FieldsForm;
+    private agreeElement: any;
 
     constructor(private page: string) {
         this.rememberMe = false;
@@ -68,15 +63,19 @@ export class Form {
         });
 
         this.processElement = document.getElementById('process');
-        this.processElement!.onclick = () :void => {
-            this.processForm();
-        };
-
-        if (page === 'login') {
-            this.agreeElement = document.getElementById('agree') as HTMLInputElement;
-            this.agreeElement.onchange = () :void => {
-                this.rememberMe = this.agreeElement.checked;
+        if(this.processElement){
+            this.processElement.onclick = () :void => {
+                this.processForm();
             };
+        }
+        if (page === 'login') {
+            if(this.agreeElement ){
+                this.agreeElement = document.getElementById('agree') as HTMLInputElement;
+                this.agreeElement.onchange = () :void => {
+                    this.rememberMe = this.agreeElement.checked;
+                };
+            }
+
         }
 
         if (page === 'login' && localStorage.getItem('email')) {
@@ -88,7 +87,7 @@ export class Form {
         }
     }
 
-    validElement(element: HTMLInputElement) :void {
+    private validElement(element: HTMLInputElement) :void {
         element.parentNode!.style.border = '2px solid red';
         element.parentNode!.style.borderRadius = '7px';
         element.parentNode!.firstElementChild!.firstElementChild!.firstElementChild!.style.fill = 'red';
@@ -97,31 +96,27 @@ export class Form {
         }
     }
 
-    validateField(field: {
-        name: string;
-        id: string;
-        element: HTMLInputElement | null;
-        regex: RegExp;
-        valid: boolean
-    }, element: HTMLInputElement | null) :void {
-        if (!element.value || !element.value.match(field.regex)) {
-            this.validElement(element);
-            field.valid = false;
-        } else if (element.id === 'repeatPassword' && element.value !== this.pass!.value) {
-            this.validElement(element);
-            field.valid = false;
-        } else {
-            element.parentNode!.removeAttribute('style');
-            element.parentNode!.firstElementChild!.firstElementChild!.firstElementChild!.removeAttribute('style');
-            if (element.parentNode!.nextElementSibling) {
-                element.parentNode!.nextElementSibling!.style.display = 'none';
+    private validateField(field:FieldsForm, element: HTMLInputElement | null) :void {
+        if(element){
+            if (!element.value || !element.value.match(field.regex)) {
+                this.validElement(element);
+                field.valid = false;
+            } else if (element.id === 'repeatPassword' && element.value !== this.pass!.value) {
+                this.validElement(element);
+                field.valid = false;
+            } else {
+                element.parentNode!.removeAttribute('style');
+                element.parentNode!.firstElementChild!.firstElementChild!.firstElementChild!.removeAttribute('style');
+                if (element.parentNode!.nextElementSibling) {
+                    element.parentNode!.nextElementSibling!.style.display = 'none';
+                }
+                field.valid = true;
             }
-            field.valid = true;
         }
         this.validateForm();
     }
 
-    validateForm(): boolean {
+    private validateForm(): boolean {
         const validForm :boolean = this.fields.every(item => item.valid);
         if (validForm) {
             this.processElement!.removeAttribute('disabled');
@@ -131,7 +126,7 @@ export class Form {
         return validForm;
     }
 
-    async processForm() :Promise<void> {
+    private async processForm() :Promise<void> {
         if (this.validateForm()) {
             const email :string = this.fields.find(item => item.name === 'email')!.element!.value;
             const password :string = this.fields.find(item => item.name === 'password')!.element!.value;

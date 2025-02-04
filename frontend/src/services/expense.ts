@@ -1,19 +1,16 @@
 import config from '../../config/config';
 import { Auth } from './auth';
 import { Operations } from './operations';
+import {RequestOptions} from "../types/request.type";
+
 
 export class Exp {
     static refreshTokenKey :string = 'refreshToken';
     static refreshToken :string|null = localStorage.getItem(this.refreshTokenKey);
 
-    static async getExpense(): Promise<any> {
+    public static async getExpense(): Promise<any> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/categories/expense`, {
-                method: 'GET',
-                headers: {
-                    'x-auth-token': this.refreshToken,
-                },
-            });
+            const response :Response = await fetch(`${config.host}/categories/expense`, RequestOptions[]);
 
             if (response && response.status === 200) {
                 const result = await response.json();
@@ -27,14 +24,9 @@ export class Exp {
         return null;
     }
 
-    static async getExpenseOne(id: number): Promise<any> {
+    public static async getExpenseOne(id: number): Promise<any> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/categories/expense/${id}`, {
-                method: 'GET',
-                headers: {
-                    'x-auth-token': this.refreshToken,
-                },
-            });
+            const response :Response = await fetch(`${config.host}/categories/expense/${id}`, RequestOptions[]);
 
             if (response && response.status === 200) {
                 const result = await response.json();
@@ -48,32 +40,17 @@ export class Exp {
         return null;
     }
 
-    static async editExpense(itemId: string, value: string): Promise<Response> {
+    public static async editExpense(itemId: string, value: string): Promise<Response> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/categories/expense/${itemId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-auth-token': this.refreshToken,
-                },
-                body: JSON.stringify({ title: value }),
-            });
+            const response :Response = await fetch(`${config.host}/categories/expense/${itemId}`,  RequestOptions[]);
             return response;
         }
         throw new Error('Refresh token is not available.');
     }
 
-    static async deleteExpense(itemId: string): Promise<void> {
+    public static async deleteExpense(itemId: string): Promise<void> {
         if (this.refreshToken) {
-            await fetch(`${config.host}/categories/expense/${itemId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-auth-token': this.refreshToken,
-                },
-            });
+            await fetch(`${config.host}/categories/expense/${itemId}`,  RequestOptions[]);
 
             const operations = await Operations.getOperations('all');
             const filteredOperations = operations.filter((operation: any) => operation.category === undefined);
@@ -84,17 +61,9 @@ export class Exp {
         }
     }
 
-    static async createExpense(value: string): Promise<Response> {
+    public static async createExpense(value: string): Promise<Response> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/categories/expense`, {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-auth-token': this.refreshToken,
-                },
-                body: JSON.stringify({ title: value }),
-            });
+            const response :Response = await fetch(`${config.host}/categories/expense`,  RequestOptions[]);
             return response;
         }
         throw new Error('Refresh token is not available.');

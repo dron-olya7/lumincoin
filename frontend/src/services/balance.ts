@@ -5,7 +5,7 @@ export class Balance {
     static refreshToken :string|null = localStorage.getItem(this.refreshTokenKey);
 
 
-    static async getBalance() :Promise<any> {
+    public static async getBalance() :Promise<any> {
         if (this.refreshToken) {
             const response :Response = await fetch(config.host + '/balance', {
                 method: 'GET',

@@ -6,7 +6,7 @@ export class Auth {
     static userInfoKey: string = 'userInfo';
     static refreshToken: string | null = localStorage.getItem(this.refreshTokenKey);
 
-    static async processUnauthorizedResponse(): Promise<boolean> {
+    private static async processUnauthorizedResponse(): Promise<boolean> {
         const loginPage: HTMLElement | null = document.getElementById('has-user-error');
         if (this.refreshToken) {
             const response: Response = await fetch(config.host + '/refresh', {
@@ -34,7 +34,7 @@ export class Auth {
         return false;
     }
 
-    static async logout(): Promise<boolean | undefined> {
+    public static async logout(): Promise<boolean | undefined> {
         if (this.refreshToken) {
             const response: Response = await fetch(config.host + '/logout', {
                 method: 'POST',
@@ -55,7 +55,7 @@ export class Auth {
         }
     }
 
-    static async refreshFunc(response: Response, func: () => Promise<any>): Promise<any> {
+    public static async refreshFunc(response: Response, func: () => Promise<any>): Promise<any> {
         if (response.status < 200 || response.status >= 300) {
             if (response.status === 401) {
                 const result: boolean = await Auth.processUnauthorizedResponse();
@@ -69,21 +69,21 @@ export class Auth {
         }
     }
 
-    static setTokens(accessToken: string, refreshToken: string): void {
+    public static setTokens(accessToken: string, refreshToken: string): void {
         localStorage.setItem(this.accessTokenKey, accessToken);
         localStorage.setItem(this.refreshTokenKey, refreshToken);
     }
 
-    static removeTokens(): void {
+    private static removeTokens(): void {
         localStorage.removeItem(this.accessTokenKey);
         localStorage.removeItem(this.refreshTokenKey);
     }
 
-    static setUserInfo(info: any): void {
+    public static setUserInfo(info: any): void {
         localStorage.setItem(this.userInfoKey, JSON.stringify(info));
     }
 
-    static getUserInfo(): any | null {
+    public static getUserInfo(): any | null {
         const userInfo: string | null = localStorage.getItem(this.userInfoKey);
         if (userInfo) {
             return JSON.parse(userInfo);

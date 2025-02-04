@@ -18,13 +18,16 @@ export class EditOperation {
         this.init();
     }
 
-    async init(): Promise<void> {
-        document.getElementById('budget-link').classList.add('active');
+    private async init(): Promise<void> {
+        let budgetLink : HTMLElement | null = document.getElementById('budget-link');
+        if (budgetLink){
+            budgetLink.classList.add('active');
+        }
         this.operation = await Operations.getOperation(this.operationId);
         await this.addValueInput(this.operation);
     }
 
-    async getCategory(): Promise<void> {
+    private async getCategory(): Promise<void> {
         if (this.type.value === 'expense') {
             const cat = await Exp.getExpense();
             this.category = cat;
@@ -44,7 +47,7 @@ export class EditOperation {
         });
     }
 
-    async addValueInput(item: any): Promise<void> {
+    private async addValueInput(item: any): Promise<void> {
         if (!item) {
             return;
         }
@@ -102,7 +105,7 @@ export class EditOperation {
             category.disabled = true;
         }
 
-        function valid() :void {
+         function valid() :void {
             if (category.value && date.value && amount.value) {
                 btnSave.disabled = false;
                 servErr.style.display = 'none';

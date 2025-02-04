@@ -1,19 +1,15 @@
 import config from '../../config/config';
 import { Auth } from './auth';
 import { Operations } from './operations';
+import {RequestOptions} from "../types/request.type";
 
 export class Inc {
     static refreshTokenKey :string = 'refreshToken';
     static refreshToken :string = localStorage.getItem(this.refreshTokenKey);
 
-    static async getIncome(): Promise<any> {
+    public static async getIncome(): Promise<any> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/categories/income`, {
-                method: 'GET',
-                headers: {
-                    'x-auth-token': this.refreshToken,
-                },
-            });
+            const response :Response = await fetch(`${config.host}/categories/income`,  RequestOptions[]);
 
             if (response && response.status === 200) {
                 const result = await response.json();
@@ -27,14 +23,9 @@ export class Inc {
         return null;
     }
 
-    static async getIncomeOne(id: string): Promise<any> {
+    public static async getIncomeOne(id: string): Promise<any> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/categories/income/${id}`, {
-                method: 'GET',
-                headers: {
-                    'x-auth-token': this.refreshToken,
-                },
-            });
+            const response :Response = await fetch(`${config.host}/categories/income/${id}`, RequestOptions[]);
 
             if (response && response.status === 200) {
                 const result = await response.json();
@@ -48,32 +39,17 @@ export class Inc {
         return null;
     }
 
-    static async editIncome(itemId: string, value: string): Promise<Response> {
+    public static async editIncome(itemId: string, value: string): Promise<Response> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/categories/income/${itemId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-auth-token': this.refreshToken,
-                },
-                body: JSON.stringify({ title: value }),
-            });
+            const response :Response = await fetch(`${config.host}/categories/income/${itemId}`, RequestOptions[]);
             return response;
         }
         throw new Error('Refresh token is not available.');
     }
 
-    static async deleteIncome(itemId: string): Promise<void> {
+    public static async deleteIncome(itemId: string): Promise<void> {
         if (this.refreshToken) {
-            await fetch(`${config.host}/categories/income/${itemId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-auth-token': this.refreshToken,
-                },
-            });
+            await fetch(`${config.host}/categories/income/${itemId}`, RequestOptions[]);
 
             const operations = await Operations.getOperations('all');
             const filteredOperations = operations.filter((operation: any) :boolean => operation.category === undefined);
@@ -84,17 +60,9 @@ export class Inc {
         }
     }
 
-    static async createIncome(value: string): Promise<Response> {
+    public static async createIncome(value: string): Promise<Response> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/categories/income`, {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-auth-token': this.refreshToken,
-                },
-                body: JSON.stringify({ title: value }),
-            });
+            const response :Response = await fetch(`${config.host}/categories/income`, {RequestOptions[]);
             return response;
         }
         throw new Error('Refresh token is not available.');

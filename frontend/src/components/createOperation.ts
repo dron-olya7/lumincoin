@@ -16,13 +16,15 @@ export class CreateOperation {
         this.init();
     }
 
-    async init(): Promise<void> {
+    private async init(): Promise<void> {
         const budgetLink :HTMLElement|null = document.getElementById('budget-link');
-        budgetLink.classList.add('active');
+        if (budgetLink){
+            budgetLink.classList.add('active');
+        }
         await this.addValueInput();
     }
 
-    async getCategory(): Promise<void> {
+    private async getCategory(): Promise<void> {
         if (this.type.value === 'expense') {
             const cat = await Exp.getExpense();
             this.category = cat;
@@ -44,7 +46,7 @@ export class CreateOperation {
         });
     }
 
-    async addValueInput(): Promise<void> {
+    private async addValueInput(): Promise<void> {
         const category :HTMLSelectElement = document.getElementById('category') as HTMLSelectElement;
         const amount :HTMLInputElement = document.getElementById('amount') as HTMLInputElement;
         const date :HTMLInputElement = document.getElementById('date') as HTMLInputElement;

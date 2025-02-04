@@ -2,12 +2,13 @@ import {Exp} from "../services/expense.js";
 import {Balance} from "../services/balance.js";
 import {Inc} from "../services/income";
 import {log10} from "chart.js/helpers";
+import {CategoryType} from "../types/category.type";
 
 export class Expense {
     title: HTMLElement;
     content: HTMLElement;
     wrapper: HTMLElement;
-    categorysExpense: Array<{ id: number; title: string }>;
+    categorysExpense: CategoryType[];
 
     constructor() {
         this.title = document.getElementById('content-title') as HTMLElement;
@@ -19,7 +20,7 @@ export class Expense {
         this.createExpense();
     }
 
-    async init(): Promise<void> {
+    private async init(): Promise<void> {
         document.getElementById("expense-link")!.classList.add('active');
         document.getElementById("category-link")!.setAttribute('aria-expanded', 'true');
         document.getElementById("account-collapse")!.classList.add('show');
@@ -28,7 +29,7 @@ export class Expense {
         this.expenseCreateField(this.categorysExpense);
     }
 
-    expenseCreateField(el: Array<{ id: number; title: string }>): void {
+    private expenseCreateField(el: CategoryType[]): void {
         if (this.categorysExpense.length === 0) {
             return;
         }
@@ -70,7 +71,7 @@ export class Expense {
         });
     }
 
-    async editExpense(itemId: number): Promise<void> {
+    private async editExpense(itemId: number): Promise<void> {
         const item = await Exp.getExpenseOne(itemId);
 
         this.title.innerText = 'Редактирование категории расходов';
@@ -136,14 +137,14 @@ export class Expense {
         btnCancel.onclick = (() => this.cancelFunc());
     }
 
-    async editFunc(itemId: string): Promise<void> {
+    private async editFunc(itemId: string): Promise<void> {
         const value: string = document.getElementById(`input-item-${itemId}`)!.value.trim().replace(/ +/g, ' ');
         await Exp.editExpense(itemId, value);
         this.categorysExpense = await Exp.getExpense();
         this.cancelFunc();
     }
 
-    cancelFunc(): void {
+    private cancelFunc(): void {
         this.title.innerText = 'Расходы';
         this.content.innerHTML = `<div class="content-item create-item" id="create-item">
             <div class="create"><span>+</span></div>
@@ -152,7 +153,7 @@ export class Expense {
         this.createExpense();
     }
 
-    async deleteExpense(itemId: number): Promise<void> {
+    private async deleteExpense(itemId: number): Promise<void> {
         const popupElement: HTMLDivElement = document.createElement('div');
         popupElement.className = 'popup';
         popupElement.setAttribute('id', 'popup');
@@ -182,7 +183,7 @@ export class Expense {
         if (btnItemDelete && btnCancel) {
             btnItemDelete.onclick = async (): Promise<void> => {
                 this.content.innerHTML = '';
-                await Exp.deleteExpense(itemId);
+                await Exp.deleteExpense(String(itemId));
                 this.categorysExpense = await Exp.getExpense();
                 this.cancelFunc();
                 popup?.remove();
@@ -195,7 +196,7 @@ export class Expense {
         }
     }
 
-    async createExpense(): Promise<void> {
+    private async createExpense(): Promise<void> {
         const createElement: HTMLElement | null = document.getElementById('create-item');
 
         if (createElement) {
@@ -270,7 +271,7 @@ export class Expense {
         }
     }
 
-    async updateBalance(): Promise<void> {
+    private async updateBalance(): Promise<void> {
         const getBalance: any = await Balance.getBalance();
         document.getElementById('balance')!.innerHTML = `Баланс:<span>${getBalance.balance} $</span>`;
     }

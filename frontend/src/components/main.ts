@@ -3,6 +3,7 @@ import {Balance} from "../services/balance";
 import Chart from "chart.js/auto";
 import {Operations} from "../services/operations";
 import {elements} from "chart.js";
+import {DateType} from "../types/date.type";
 
 export class Main {
     diagrams: HTMLDivElement;
@@ -16,7 +17,7 @@ export class Main {
         this.showDiagram('today');
     }
 
-    async init(): Promise<void> {
+    private async init(): Promise<void> {
         document.getElementById("main-link")?.classList.add('active');
         const userInfo = await Auth.getUserInfo();
         const getBalance = await Balance.getBalance();
@@ -24,20 +25,20 @@ export class Main {
         document.getElementById('fullName')!.innerText = `${userInfo.userName} ${userInfo.userLastName}`;
     }
 
-    async showDiagram(value: string, dateFrom?: string, dateTo?: string): Promise<void> {
+    private async showDiagram(value: string, dateFrom?: string, dateTo?: string): Promise<void> {
         await this.getData(value, dateFrom, dateTo);
         await this.incomeDiagrams();
     }
 
-    async getData(value: string, dateFrom?: string, dateTo?: string): Promise<void> {
-        const inc: Array<{ category: string; amount: number }> = [];
-        const dec: Array<{ category: string; amount: number }> = [];
+    private async getData(value: string, dateFrom?: string, dateTo?: string): Promise<void> {
+        const inc: DateType[] = [];
+        const dec: DateType[] = [];
         const data = await Operations.getOperations(value, dateFrom, dateTo);
 
         // Доходы
         data.forEach((obj) :void => {
             if (obj.type === 'income') {
-                const existingCategory = inc.find(i => i.category === obj.category);
+                const existingCategory :DateType | undefined = inc.find(i  => i.category === obj.category);
                 if (existingCategory) {
                     existingCategory.amount += obj.amount;
                 } else {
@@ -49,7 +50,7 @@ export class Main {
         // Расходы
         data.forEach((obj) :void => {
             if (obj.type === 'expense') {
-                const existingCategory = dec.find(i => i.category === obj.category);
+                const existingCategory :DateType | undefined = dec.find(i => i.category === obj.category);
                 if (existingCategory) {
                     existingCategory.amount += obj.amount;
                 } else {
@@ -68,7 +69,7 @@ export class Main {
         `;
     }
 
-    async incomeDiagrams(): Promise<void> {
+    private async incomeDiagrams(): Promise<void> {
         const incomeChart :HTMLCanvasElement = document.getElementById('income-diagram') as HTMLCanvasElement;
         const expenseChart :HTMLCanvasElement = document.getElementById('expense-diagram') as HTMLCanvasElement;
 
@@ -120,7 +121,7 @@ export class Main {
         });
     }
 
-    activeFilter(): void {
+     private activeFilter(): void {
         const today :HTMLButtonElement = document.getElementById('today') as HTMLButtonElement;
         const week :HTMLButtonElement = document.getElementById('week') as HTMLButtonElement;
         const month :HTMLButtonElement = document.getElementById('month') as HTMLButtonElement;

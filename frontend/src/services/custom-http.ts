@@ -1,7 +1,7 @@
 import { Auth } from "./auth";
 
 export class CustomHttp {
-    static async request(url: string, method: string = "GET", body: any = null): Promise<any> {
+    public static async request(url: string, method: string = "GET", body: any = null): Promise<any> {
         const params: RequestInit = {
             method: method,
             headers: {

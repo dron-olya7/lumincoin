@@ -46,7 +46,7 @@ export class Operations {
         throw new Error('Refresh token is not available.');
     }
 
-    static async getOperation(itemId: string): Promise<any> {
+    static async getOperation(itemId: string | null): Promise<any> {
         if (this.refreshToken) {
             const response :Response = await fetch(`${config.host}/operations/${itemId}`, {
                 method: 'GET',
