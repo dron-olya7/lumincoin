@@ -6,7 +6,7 @@ export class Auth {
     static userInfoKey: string = 'userInfo';
     static refreshToken: string | null = localStorage.getItem(this.refreshTokenKey);
 
-    private static async processUnauthorizedResponse(): Promise<boolean> {
+    public static async processUnauthorizedResponse(): Promise<boolean> {
         const loginPage: HTMLElement | null = document.getElementById('has-user-error');
         if (this.refreshToken) {
             const response: Response = await fetch(config.host + '/refresh', {

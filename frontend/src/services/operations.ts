@@ -1,8 +1,8 @@
 import config from '../../config/config';
 
 export class Operations {
-    static refreshTokenKey :string = 'refreshToken';
-    static refreshToken :string = localStorage.getItem(this.refreshTokenKey);
+    static refreshTokenKey: string = 'refreshToken';
+    static refreshToken: string | null = localStorage.getItem(this.refreshTokenKey);
 
     static async getOperations(period?: string, dateFrom?: string, dateTo?: string): Promise<any> {
         if (this.refreshToken) {
@@ -85,7 +85,7 @@ export class Operations {
 
     static async deleteOperations(id: string): Promise<Response> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/operations/${id}`, {
+            const response: Response = await fetch(`${config.host}/operations/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-type': 'application/json',

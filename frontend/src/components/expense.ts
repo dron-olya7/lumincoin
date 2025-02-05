@@ -1,7 +1,5 @@
 import {Exp} from "../services/expense.js";
 import {Balance} from "../services/balance.js";
-import {Inc} from "../services/income";
-import {log10} from "chart.js/helpers";
 import {CategoryType} from "../types/category.type";
 
 export class Expense {

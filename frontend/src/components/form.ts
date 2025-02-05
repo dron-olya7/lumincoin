@@ -4,10 +4,10 @@ import config from "../../config/config";
 import {FieldsForm} from "../types/form.type";
 
 export class Form {
-    private readonly rememberMe: boolean;
+    private rememberMe: boolean;
     private processElement: HTMLElement | null;
     private pass: HTMLInputElement | null;
-    private fields: FieldsForm;
+    private fields: FieldsForm[];
     private agreeElement: any;
 
     constructor(private page: string) {

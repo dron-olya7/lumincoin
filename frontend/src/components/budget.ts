@@ -114,8 +114,9 @@ export class Budget {
             }
         }
 
-        d.style.overflow = 'scroll';
-        d.innerHTML = `
+        if (d){
+            d.style.overflow = 'scroll';
+            d.innerHTML = `
                  <table id="budget-table">
                     <thead>
                     <tr class="budget-table-tr" id="td-titles">
@@ -130,6 +131,8 @@ export class Budget {
                     <thead>
                  </table>
         `;
+        }
+
 
         el.forEach(item => {
             let itemType = item.type;
@@ -192,9 +195,10 @@ export class Budget {
                 });
             }
 
+            const itemTabs: HTMLCollectionOf<Element> = document.getElementsByClassName("item-tabs")
             if (btnDelete){
                 btnDelete.onclick = (async (): Promise<void> => {
-                    const array :any[] = [...document.getElementsByClassName("item-tabs")];
+                    const array :any[] = [itemTabs];
                     const a = array.find(el => el.classList.contains('active'));
                     await this.deleteBudget(item.id, a.id)
                 });
@@ -234,21 +238,27 @@ export class Budget {
                 await Operations.deleteOperations(itemId);
                 this.budgetOperations = await Operations.getOperations(path);
                 const budgetTable :HTMLElement|null = document.getElementById('budget-table');
-                budgetTable.innerHTML = '';
+                if (budgetTable){
+                    budgetTable.innerHTML = '';
+                }
                 this.budgetOperationsField({el: this.budgetOperations});
-                popup.remove();
+                if (popup){
+                    popup.remove();
+                }
                 await this.updateBalance();
             });
         }
 
         if (btnCancel){
             btnCancel.onclick = (() :void => {
-                popup.remove();
+                if (popup){
+                    popup.remove();
+                }
             })
         }
     }
 
-    private async justDelete(itemId) :Promise<void> {
+    private async justDelete(itemId): Promise<void> {
         await Operations.deleteOperations(itemId);
         await this.updateBalance();
     }

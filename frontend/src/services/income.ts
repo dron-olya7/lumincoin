@@ -4,12 +4,12 @@ import { Operations } from './operations';
 import {RequestOptions} from "../types/request.type";
 
 export class Inc {
-    static refreshTokenKey :string = 'refreshToken';
-    static refreshToken :string = localStorage.getItem(this.refreshTokenKey);
+    static refreshTokenKey: string = 'refreshToken';
+    static refreshToken: string | null = localStorage.getItem(this.refreshTokenKey);
+        public static async getIncome(): Promise<any> {
 
-    public static async getIncome(): Promise<any> {
         if (this.refreshToken) {
-            const response :Response = await fetch(`${config.host}/categories/income`,  RequestOptions[]);
+            const response: Response = await fetch(`${config.host}/categories/income`,  RequestOptions);
 
             if (response && response.status === 200) {
                 const result = await response.json();

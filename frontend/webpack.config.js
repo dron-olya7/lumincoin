@@ -12,6 +12,20 @@ module.exports = {
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
+            {
+                test: /\.(css|sass|scss)$/,
+                use: [
+                    {
+                        loader: 'style-loader'
+                    },
+                    {
+                        loader: 'css-loader'
+                    },
+                    {
+                        loader: 'sass-loader'
+                    }
+                ]
+            }
         ],
     },
     resolve: {
@@ -40,22 +54,4 @@ module.exports = {
             ],
         }),
     ],
-    module: {
-        rules: [
-            {
-                test: /\.(css|sass|scss)$/,
-                use: [
-                    {
-                        loader: 'style-loader'
-                    },
-                    {
-                        loader: 'css-loader'
-                    },
-                    {
-                        loader: 'sass-loader'
-                    }
-                ]
-            }
-        ]
-    },
 };

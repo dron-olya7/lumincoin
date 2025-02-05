@@ -1,6 +1,5 @@
 import { Router } from "./router";
 import './scss/styles.scss';
-import * as bootstrap from 'bootstrap';
 
 class App {
     private router: Router;
