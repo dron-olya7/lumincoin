@@ -43,13 +43,15 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: "./index.html"
+            template: ".src/index.html"
         }),
         new CopyPlugin({
             patterns: [
-                {from: "templates", to: "templates"},
-                // {from: "styles", to: "styles"},
-                // {from: "static/fonts", to: "fonts"},
+                {from: "src/templates", to: "templates"},
+                {from: "src/components", to: "components"},
+                {from: "src/scss", to: "scss"},
+                {from: "src/services", to: "services"},
+                {from: "src/types", to: "types"},
                 {from: "static/images", to: "images"},
             ],
         }),

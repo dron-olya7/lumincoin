@@ -8,6 +8,7 @@ import {CreateOperation} from "./components/createOperation";
 import {Balance} from "./services/balance";
 import {Main} from "./components/main";
 import {RouteType} from "./types/route.type";
+import {UserInfo} from "./types/userInfo.type";
 
 export class Router {
     contentElement: HTMLElement | null;
@@ -137,7 +138,7 @@ export class Router {
             wrapper.insertBefore(sideDiv, wrapper.firstChild);
         }
 
-        const userInfo = Auth.getUserInfo();
+        const userInfo: UserInfo|null = Auth.getUserInfo();
         const getBalance = await Balance.getBalance();
         const accessToken: string | null = localStorage.getItem(Auth.accessTokenKey);
 
@@ -147,12 +148,10 @@ export class Router {
             urlRoute !== '#/login' &&
             urlRoute !== '#/signup'
         ) {
-            this.balanceElement!.innerHTML = `Баланс: <span>${
-                getBalance.balance
-            } $</span>`;
-            document.getElementById('fullName')!.innerText = `${
-                userInfo.userName
-            } ${userInfo.userLastName}`;
+            if(getBalance){
+                this.balanceElement!.innerHTML = `Баланс: <span>${getBalance.balance} $</span>`;
+            } 
+            document.getElementById('fullName')!.innerText = `${userInfo.userName} ${userInfo.userLastName}`;
         }
 
         if (urlRoute !== '#/login') {

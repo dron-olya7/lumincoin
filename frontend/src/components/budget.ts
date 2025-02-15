@@ -1,121 +1,147 @@
 import {Operations} from "../services/operations";
 import {Balance} from "../services/balance";
-
+import {BudgetItem} from "../types/budgetItem.type";
+import {OperationType} from "../types/operation.type";
+import {BalanceResponse} from "../types/balanceResponse.type";
 
 export class Budget {
     title: HTMLHeadingElement;
     content: HTMLElement;
     wrapper: HTMLElement;
-    budgetOperations: any[];
+    budgetOperations: BudgetItem[];
 
     constructor() {
-        this.title = document.getElementById('content-title') as HTMLHeadingElement;
-        this.content = document.getElementById('budget-content') as HTMLElement;
-        this.wrapper = document.getElementById('wrapper') as HTMLElement;
+        this.title = document.getElementById("content-title") as HTMLHeadingElement;
+        this.content = document.getElementById("budget-content") as HTMLElement;
+        this.wrapper = document.getElementById("wrapper") as HTMLElement;
         this.budgetOperations = [];
-        this.init('today');
+        this.init("today");
         this.activeFilter();
         this.createOperation();
         this.updateBalance();
     }
 
     async init(value: string, dateFrom?: string, dateTo?: string): Promise<void> {
-        document.getElementById("budget-link")!.classList.add('active');
-        this.budgetOperations = await Operations.getOperations(value, dateFrom, dateTo);
+        const operations: OperationType[] = await Operations.getOperations(value, dateFrom, dateTo);
+        this.budgetOperations = operations
+            .filter((op: OperationType) => op.type !== undefined && op.date !== undefined)
+            .map((op: OperationType) => ({
+                ...op,
+                type: op.type || "default",
+                date: op.date ? new Date(op.date) : undefined,
+            }));
+
         this.budgetOperationsField({el: this.budgetOperations});
     }
 
     private activeFilter(): void {
-        const today: HTMLButtonElement = document.getElementById('today') as HTMLButtonElement;
-        const week: HTMLButtonElement = document.getElementById('week') as HTMLButtonElement;
-        const month: HTMLButtonElement = document.getElementById('month') as HTMLButtonElement;
-        const year: HTMLButtonElement = document.getElementById('year') as HTMLButtonElement;
-        const all: HTMLButtonElement = document.getElementById('all') as HTMLButtonElement;
-        const interval: HTMLButtonElement = document.getElementById('interval') as HTMLButtonElement;
-        const dateFrom: HTMLInputElement = document.getElementById('dateFrom') as HTMLInputElement;
-        const dateTo: HTMLInputElement = document.getElementById('dateTo') as HTMLInputElement;
-        const itemTabs: HTMLCollectionOf<Element> = document.getElementsByClassName('item-tabs');
+        const today: HTMLButtonElement = document.getElementById(
+            "today"
+        ) as HTMLButtonElement;
+        const week: HTMLButtonElement = document.getElementById(
+            "week"
+        ) as HTMLButtonElement;
+        const month: HTMLButtonElement = document.getElementById(
+            "month"
+        ) as HTMLButtonElement;
+        const year: HTMLButtonElement = document.getElementById(
+            "year"
+        ) as HTMLButtonElement;
+        const all: HTMLButtonElement = document.getElementById(
+            "all"
+        ) as HTMLButtonElement;
+        const interval: HTMLButtonElement = document.getElementById(
+            "interval"
+        ) as HTMLButtonElement;
+        const dateFrom: HTMLInputElement = document.getElementById(
+            "dateFrom"
+        ) as HTMLInputElement;
+        const dateTo: HTMLInputElement = document.getElementById(
+            "dateTo"
+        ) as HTMLInputElement;
+        const itemTabs: HTMLCollectionOf<Element> =
+            document.getElementsByClassName("item-tabs");
 
         function check(): void {
-            Array.from(itemTabs).forEach((el): void => {
-                el.classList.remove('active');
+            Array.from(itemTabs).forEach((el: Element): void => {
+                el.classList.remove("active");
             });
-            if (!interval.classList.contains('active')) {
-                dateFrom.setAttribute('disabled', 'disabled');
-                dateTo.setAttribute('disabled', 'disabled');
+            if (!interval.classList.contains("active")) {
+                dateFrom.setAttribute("disabled", "disabled");
+                dateTo.setAttribute("disabled", "disabled");
             }
         }
 
         today.onclick = async (): Promise<void> => {
             check();
-            today.classList.add('active');
-            await this.init('today');
+            today.classList.add("active");
+            await this.init("today");
         };
 
         week.onclick = async (): Promise<void> => {
             check();
-            week.classList.add('active');
-            await this.init('week');
+            week.classList.add("active");
+            await this.init("week");
         };
 
         month.onclick = async (): Promise<void> => {
             check();
-            month.classList.add('active');
-            await this.init('month');
+            month.classList.add("active");
+            await this.init("month");
         };
 
         year.onclick = async (): Promise<void> => {
             check();
-            year.classList.add('active');
-            await this.init('year');
+            year.classList.add("active");
+            await this.init("year");
         };
 
         all.onclick = async (): Promise<void> => {
             check();
-            all.classList.add('active');
-            await this.init('all');
+            all.classList.add("active");
+            await this.init("all");
         };
 
         interval.onclick = async (): Promise<void> => {
             check();
-            interval.classList.add('active');
+            interval.classList.add("active");
 
             if (dateFrom.value && dateTo.value) {
-                await this.init('interval', dateFrom.value, dateTo.value);
+                await this.init("interval", dateFrom.value, dateTo.value);
             }
 
-            if (interval.classList.contains('active')) {
-                dateFrom.removeAttribute('disabled');
-                dateTo.removeAttribute('disabled');
+            if (interval.classList.contains("active")) {
+                dateFrom.removeAttribute("disabled");
+                dateTo.removeAttribute("disabled");
             }
 
             dateFrom.onchange = (): void => {
                 if (dateFrom.value && dateTo.value) {
-                    this.init('interval', dateFrom.value, dateTo.value);
+                    this.init("interval", dateFrom.value, dateTo.value);
                 }
             };
 
             dateTo.onchange = (): void => {
                 if (dateFrom.value && dateTo.value) {
-                    this.init('interval', dateFrom.value, dateTo.value);
+                    this.init("interval", dateFrom.value, dateTo.value);
                 }
             };
         };
     }
 
-    private budgetOperationsField({el}: { el: any }): void {
-        const d: HTMLElement | null = document.getElementById('budget-not-items');
-        if (d){
+    private budgetOperationsField({el}: { el: BudgetItem[] }): void {
+        const d: HTMLElement | null = document.getElementById("budget-not-items");
+        if (d) {
             if (el.length === 0) {
-                d.style.overflow = 'visible';
+                d.style.overflow = "visible";
                 d.innerHTML = `
-            <div class="not-operation">Операций не найдено</div>`
-                return
+            <div class="not-operation">Операций не найдено</div>`;
+                return;
             }
         }
 
-        if (d){
-            d.style.overflow = 'scroll';
+        if (d) {
+            d.style.overflow = "scroll";
             d.innerHTML = `
                  <table id="budget-table">
                     <thead>
@@ -133,18 +159,18 @@ export class Budget {
         `;
         }
 
-
-        el.forEach(item => {
-            let itemType = item.type;
-            if (itemType === 'income') {
-                itemType = 'Доход'
+        el.forEach((item: BudgetItem): void => {
+            let itemType: string|undefined = item.type;
+            if (itemType === "income") {
+                itemType = "Доход";
             }
-            if (itemType === 'expense') {
-                itemType = 'Расход'
+            if (itemType === "expense") {
+                itemType = "Расход";
             }
-            const count = el.indexOf(item) + 1;
-            const budgetTableTrElement: HTMLTableRowElement = document.createElement('tr');
-            budgetTableTrElement.className = 'budget-table-tr';
+            const count: number = el.indexOf(item) + 1;
+            const budgetTableTrElement: HTMLTableRowElement =
+                document.createElement("tr");
+            budgetTableTrElement.className = "budget-table-tr";
             budgetTableTrElement.innerHTML = `
                         <td class="budget-table-td td-titles">${count}</td>
                         <td class="budget-table-td ${item.type}" >${itemType}</td>
@@ -175,42 +201,49 @@ export class Budget {
                         </td>
             `;
 
-            const tableNameEl: HTMLElement | null = document.getElementById('budget-table');
-            if (tableNameEl){
+            const tableNameEl: HTMLElement | null =
+                document.getElementById("budget-table");
+            if (tableNameEl) {
                 tableNameEl.appendChild(budgetTableTrElement);
             }
 
             if (!item.category && item.id) {
                 this.justDelete(item.id);
-                location.href = '#/budget';
+                location.href = "#/budget";
             }
 
-            const btnEdit: HTMLElement | null = document.getElementById(`operation-edit-${item.id}`);
-            const btnDelete: HTMLElement | null = document.getElementById(`operation-delete-${item.id}`);
+            const btnEdit: HTMLElement | null = document.getElementById(
+                `operation-edit-${item.id}`
+            );
+            const btnDelete: HTMLElement | null = document.getElementById(
+                `operation-delete-${item.id}`
+            );
 
-            if (btnEdit){
-                btnEdit.onclick = ((): void => {
-                    localStorage.setItem('operationId', item.id);
-                    location.href = '#/budget/edit-operation';
-                });
+            if (btnEdit) {
+                btnEdit.onclick = (): void => {
+                    localStorage.setItem("operationId", String(item.id));
+                    location.href = "#/budget/edit-operation";
+                };
             }
 
-            const itemTabs: HTMLCollectionOf<Element> = document.getElementsByClassName("item-tabs")
-            if (btnDelete){
-                btnDelete.onclick = (async (): Promise<void> => {
-                    const array :any[] = [itemTabs];
-                    const a = array.find(el => el.classList.contains('active'));
-                    await this.deleteBudget(item.id, a.id)
-                });
+            const itemTabs: HTMLCollectionOf<Element> =
+                document.getElementsByClassName("item-tabs");
+            if (btnDelete) {
+                btnDelete.onclick = async (): Promise<void> => {
+                    const array: Element[] = Array.from(itemTabs);
+                    const a: Element|undefined = array.find((el: Element) => el.classList.contains("active"));
+                    if (a) {
+                        await this.deleteBudget(String(item.id), a.id);
+                    }
+                };
             }
-
-        })
+        });
     }
 
-    private async deleteBudget(itemId, path) :Promise<void> {
-        const popupElement :HTMLDivElement = document.createElement('div');
-        popupElement.className = 'popup';
-        popupElement.setAttribute('id', 'popup');
+    private async deleteBudget(itemId: string, path: string): Promise<void> {
+        const popupElement: HTMLDivElement = document.createElement("div");
+        popupElement.className = "popup";
+        popupElement.setAttribute("id", "popup");
         popupElement.innerHTML = `
         <div class="popup-block">
             <div class="popup-title">Вы действительно хотите удалить операцию?</div>
@@ -229,57 +262,70 @@ export class Budget {
         </div>`;
         this.wrapper.appendChild(popupElement);
 
-        const popup  :HTMLElement|null = document.getElementById(`popup`);
-        const btnItemDelete  :HTMLElement|null = document.getElementById(`btn-item-delete-${itemId}`);
-        const btnCancel  :HTMLElement|null = document.getElementById(`btn-item-сancel-${itemId}`);
+        const popup: HTMLElement | null = document.getElementById(`popup`);
+        const btnItemDelete: HTMLElement | null = document.getElementById(
+            `btn-item-delete-${itemId}`
+        );
+        const btnCancel: HTMLElement | null = document.getElementById(
+            `btn-item-сancel-${itemId}`
+        );
 
-        if (btnItemDelete){
-            btnItemDelete.onclick = (async () :Promise<void> => {
+        if (btnItemDelete) {
+            btnItemDelete.onclick = async (): Promise<void> => {
                 await Operations.deleteOperations(itemId);
-                this.budgetOperations = await Operations.getOperations(path);
-                const budgetTable :HTMLElement|null = document.getElementById('budget-table');
-                if (budgetTable){
-                    budgetTable.innerHTML = '';
+                const operations: OperationType[] = await Operations.getOperations(path);
+                this.budgetOperations = operations.map((op) => ({
+                    ...op,
+                    date: op.date ? new Date(op.date) : undefined,
+                }));
+
+                const budgetTable: HTMLElement | null = document.getElementById("budget-table");
+                if (budgetTable) {
+                    budgetTable.innerHTML = "";
                 }
                 this.budgetOperationsField({el: this.budgetOperations});
-                if (popup){
+                if (popup) {
                     popup.remove();
                 }
                 await this.updateBalance();
-            });
+            };
         }
 
-        if (btnCancel){
-            btnCancel.onclick = (() :void => {
-                if (popup){
+        if (btnCancel) {
+            btnCancel.onclick = (): void => {
+                if (popup) {
                     popup.remove();
                 }
-            })
+            };
         }
     }
 
-    private async justDelete(itemId): Promise<void> {
-        await Operations.deleteOperations(itemId);
+    private async justDelete(itemId: string | number): Promise<void> {
+        await Operations.deleteOperations(String(itemId));
         await this.updateBalance();
     }
 
-    private createOperation() :void {
-        const btnCreateIncome :HTMLElement|null = document.getElementById(`create-income`);
-        const btnCreateExpense :HTMLElement|null = document.getElementById(`create-expense`);
-        if (btnCreateIncome){
-            btnCreateIncome.onclick = (() :string => location.href = '#/budget/create-operation');
+    private createOperation(): void {
+        const btnCreateIncome: HTMLElement | null =
+            document.getElementById(`create-income`);
+        const btnCreateExpense: HTMLElement | null =
+            document.getElementById(`create-expense`);
+        if (btnCreateIncome) {
+            btnCreateIncome.onclick = (): string =>
+                (location.href = "#/budget/create-operation");
         }
-       if (btnCreateExpense) {
-           btnCreateExpense.onclick = ((): string => location.href = '#/budget/create-operation');
-       }
+        if (btnCreateExpense) {
+            btnCreateExpense.onclick = (): string =>
+                (location.href = "#/budget/create-operation");
+        }
     }
 
-    private async updateBalance() :Promise<void> {
-        const getBalance = await Balance.getBalance();
-        const balanceEl :HTMLElement|null = document.getElementById('balance');
-        if (balanceEl){
+    private async updateBalance(): Promise<void> {
+        const getBalance: BalanceResponse|null = await Balance.getBalance();
+        const balanceEl: HTMLElement | null = document.getElementById("balance");
+
+        if (getBalance && balanceEl) {
             balanceEl.innerHTML = `Баланс: <span>${getBalance.balance} $</span>`;
         }
     }
-
 }

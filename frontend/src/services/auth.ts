@@ -1,4 +1,6 @@
 import config from "../../config/config";
+import { TokenResponse } from "../types/tokenResponse.type";
+import { UserInfo } from "../types/userInfo.type";
 
 export class Auth {
     static accessTokenKey: string = 'accessToken';
@@ -18,7 +20,7 @@ export class Auth {
                 body: JSON.stringify({ refreshToken: this.refreshToken })
             });
             if (response && response.status === 200) {
-                const result: any = await response.json();
+                const result: TokenResponse = await response.json();
                 if (result && !result.error) {
                     this.setTokens(result.accessToken, result.refreshToken);
                     return true;
@@ -45,7 +47,7 @@ export class Auth {
                 body: JSON.stringify({ refreshToken: this.refreshToken })
             });
             if (response && response.status === 200) {
-                const result: any = await response.json();
+                const result: TokenResponse= await response.json();
                 if (result && !result.error) {
                     Auth.removeTokens();
                     localStorage.removeItem(Auth.userInfoKey);
@@ -79,11 +81,11 @@ export class Auth {
         localStorage.removeItem(this.refreshTokenKey);
     }
 
-    public static setUserInfo(info: any): void {
+    public static setUserInfo(info: UserInfo): void {
         localStorage.setItem(this.userInfoKey, JSON.stringify(info));
     }
 
-    public static getUserInfo(): any | null {
+    public static getUserInfo(): UserInfo | null {
         const userInfo: string | null = localStorage.getItem(this.userInfoKey);
         if (userInfo) {
             return JSON.parse(userInfo);

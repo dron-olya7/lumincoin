@@ -1,73 +1,81 @@
 import {Inc} from "../services/income";
 import {Balance} from "../services/balance";
+import { IncomeType } from "../types/income.type";
+import {IncomeResponse} from "../types/incomeResponse.type";
+import {BalanceResponse} from "../types/balanceResponse.type";
 
 export class Income {
     title: HTMLElement | null;
     content: HTMLElement | null;
     wrapper: HTMLElement | null;
-    categorysIncome: Array<any> = [];
-
+    categorysIncome!: IncomeType[];
+    
     constructor() {
         this.title = document.getElementById('content-title');
         this.content = document.getElementById('content-items');
         this.wrapper = document.getElementById('wrapper');
         this.init();
-        this.incomeCreateField(this.categorysIncome);
+        this.incomeCreateField(this.categorysIncome as ({ title: string | null; id: number })[]);;
         this.createIncome();
     }
-
+    
     private async init(): Promise<void> {
         document.getElementById("income-link")?.classList.add('active');
         document.getElementById("category-link")?.setAttribute('aria-expanded', 'true');
         document.getElementById("account-collapse")?.classList.add('show');
-        this.title!.innerText = 'Доходы';
-        this.categorysIncome = await Inc.getIncome();
-        this.incomeCreateField(this.categorysIncome);
+        this.title!.innerText = 'Доходы';      
+        const incomeResponse: IncomeResponse = await Inc.getIncome();
+        this.categorysIncome = [incomeResponse];
+        this.incomeCreateField(this.categorysIncome as ({ title: string | null; id: number })[]);;
     }
-
-    private incomeCreateField(el: any[]): void {
+    
+    private incomeCreateField(el: { title: string | null; id: number  }[]): void {
         if (this.categorysIncome.length === 0) {
             return;
         }
-        el.forEach((item) :void => {
-            const contentItemElement :HTMLDivElement = document.createElement('div');
+        
+        el.forEach((item): void => {
+            const contentItemElement: HTMLDivElement = document.createElement('div');
             contentItemElement.className = 'content-item';
-
-            const itemNameElement :HTMLDivElement = document.createElement('div');
+            
+            const itemNameElement: HTMLDivElement = document.createElement('div');
             itemNameElement.className = 'item-name';
-            itemNameElement.innerText = item.title;
-
-            const itemButtonsElement :HTMLDivElement = document.createElement('div');
+            itemNameElement.textContent = item.title;
+            
+            const itemButtonsElement: HTMLDivElement = document.createElement('div');
             itemButtonsElement.className = 'item-btns';
             itemButtonsElement.innerHTML = `
-            <div class="item-btn">
-                <button class="btn btn-edit bg-primary" id="btn-edit-${item.id}">
-                    Редактировать
-                </button>
-            </div>
-            <div class="item-btn">
-                <button class="btn bg-danger btn-delete" id="btn-delete-${item.id}">
-                    Удалить
-                </button>
-            </div>`;
-
+                <div class="item-btn">
+                    <button class="btn btn-edit bg-primary" id="btn-edit-${item.id}">Редактировать</button>
+                </div>
+                <div class="item-btn">
+                    <button class="btn bg-danger btn-delete" id="btn-delete-${item.id}">Удалить</button>
+                </div>`;
+            
             contentItemElement.appendChild(itemNameElement);
             contentItemElement.appendChild(itemButtonsElement);
-
-            const contentItemsEl :HTMLElement|null = document.getElementById('content-items');
-            const createItemEl :HTMLElement|null = document.getElementById('create-item');
-
-            contentItemsEl!.insertBefore(contentItemElement, createItemEl);
-
-            const btnEdit :HTMLElement|null = document.getElementById(`btn-edit-${item.id}`);
-            const btnDelete :HTMLElement|null = document.getElementById(`btn-delete-${item.id}`);
-            btnEdit!.onclick = () => this.editIncome(item.id);
-            btnDelete!.onclick = () => this.deleteIncome(item.id);
+            
+            const contentItemsEl: HTMLElement | null = document.getElementById('content-items');
+            const createItemEl: HTMLElement | null = document.getElementById('create-item');
+            
+            if (contentItemsEl && createItemEl) {
+                contentItemsEl.insertBefore(contentItemElement, createItemEl);
+                
+                const btnEdit: Element | null = document.getElementById(`btn-edit-${item.id}`);
+                const btnDelete: Element | null = document.getElementById(`btn-delete-${item.id}`);
+                
+                if (btnEdit) {
+                    btnEdit.addEventListener('click', () => this.editIncome(item.id));
+                }
+                if (btnDelete) {
+                    btnDelete.addEventListener('click', () => this.deleteIncome(item.id));
+                }
+            }
         });
     }
 
-    private async editIncome(itemId: string): Promise<void> {
-        const item = await Inc.getIncomeOne(itemId);
+    private async editIncome(itemId: number): Promise<void> {
+        const item: IncomeResponse = await Inc.getIncomeOne(itemId);
         this.title!.innerText = 'Редактирование категории доходов';
         this.content!.innerHTML = `<div class="content-items create-edit">
             <div class="input-error" id="input-error">Введите название категории</div>
@@ -87,21 +95,21 @@ export class Income {
             </div>
         </div>`;
 
-        const value :HTMLInputElement = document.getElementById(`input-item-${item.id}`) as HTMLInputElement;
-        const btnCreate :HTMLButtonElement = document.getElementById(`btn-create-${item.id}`) as HTMLButtonElement;
-        const btnCancel :HTMLButtonElement = document.getElementById(`btn-cancel-${item.id}`) as HTMLButtonElement;
-        const nonValid :HTMLElement|null = document.getElementById('input-error');
-        const servErr :HTMLElement|null = document.getElementById('input-server-error');
+        const value: HTMLInputElement = document.getElementById(`input-item-${item.id}`) as HTMLInputElement;
+        const btnCreate: HTMLButtonElement = document.getElementById(`btn-create-${item.id}`) as HTMLButtonElement;
+        const btnCancel: HTMLButtonElement = document.getElementById(`btn-cancel-${item.id}`) as HTMLButtonElement;
+        const nonValid: HTMLElement|null = document.getElementById('input-error');
+        const servErr: HTMLElement|null = document.getElementById('input-server-error');
 
         if (!value.value) {
             btnCreate.setAttribute('disabled', 'disabled');
         }
-        value.oninput = () :void => {
+        value.oninput = (): void => {
             if (value.value[0] === ' ') {
                 value.value = '';
             }
         };
-        value.onchange = () :void => {
+        value.onchange = (): void => {
             if (this.categorysIncome.find(i => i.title === value.value)) {
                 btnCreate.setAttribute('disabled', 'disabled');
                 value.style.border = '2px solid red';
@@ -118,13 +126,15 @@ export class Income {
             }
         };
 
-        btnCreate.onclick = () => this.editFunc(itemId, value.value.trim().replace(/ +/g, ' '));
+        btnCreate.onclick = () => this.editFunc(itemId.toString(), value.value.trim().replace(/ +/g, ' '));
         btnCancel.onclick = () => this.cancelFunc();
     }
 
     private async editFunc(itemId: string, value: string): Promise<void> {
-        await Inc.editIncome(itemId, value);
-        this.categorysIncome = await Inc.getIncome();
+        await Inc.editIncome(parseInt(itemId, 10), value);
+        const incomeResponse: IncomeResponse = await Inc.getIncome();
+        this.categorysIncome = [incomeResponse]; 
+        
         this.cancelFunc();
     }
 
@@ -133,12 +143,12 @@ export class Income {
         this.content!.innerHTML = `<div class="content-item create-item" id="create-item">
             <div class="create"><span>+</span></div>
         </div>`;
-        this.incomeCreateField(this.categorysIncome);
+        this.incomeCreateField(this.categorysIncome as ({ title: string | null; id: number })[]);
         this.createIncome();
     }
 
-    private async deleteIncome(itemId: string): Promise<void> {
-        const popupElement :HTMLDivElement = document.createElement('div');
+    private async deleteIncome(itemId: number): Promise<void> {
+        const popupElement: HTMLDivElement = document.createElement('div');
         popupElement.className = 'popup';
         popupElement.setAttribute('id', 'popup');
         popupElement.innerHTML = `
@@ -165,20 +175,21 @@ export class Income {
         btnItemDelete!.onclick = async (): Promise<void> => {
             this.content!.innerHTML = '';
             await Inc.deleteIncome(itemId);
-            this.categorysIncome = await Inc.getIncome();
+            const incomeResponse: IncomeResponse = await Inc.getIncome();
+            this.categorysIncome = [incomeResponse];             
             this.cancelFunc();
             popup!.remove();
             this.updateBalance();
         };
 
-        btnCancel!.onclick = () :void => {
+        btnCancel!.onclick = (): void => {
             popup!.remove();
         };
     }
 
     private async createIncome(): Promise<void> {
-        const createElement :HTMLElement|null = document.getElementById('create-item');
-        createElement!.onclick = () :void => {
+        const createElement: HTMLElement|null = document.getElementById('create-item');
+        createElement!.onclick = (): void => {
             this.title!.innerText = 'Создание категории доходов';
             this.content!.innerHTML = `
         <div class="content-items create-edit">
@@ -199,24 +210,24 @@ export class Income {
             </div>
         </div>`;
 
-            const btnCancelCreate :HTMLButtonElement = document.getElementById('btn-cancel-create') as HTMLButtonElement;
-            const btnItemCreate :HTMLButtonElement  = document.getElementById('btn-item-create') as HTMLButtonElement;
-            const valueCreate :HTMLInputElement = document.getElementById('create-item-value') as HTMLInputElement;
-            const nonValid :HTMLElement|null = document.getElementById('input-error');
-            const servErr :HTMLElement|null = document.getElementById('input-server-error');
+            const btnCancelCreate: HTMLButtonElement = document.getElementById('btn-cancel-create') as HTMLButtonElement;
+            const btnItemCreate: HTMLButtonElement  = document.getElementById('btn-item-create') as HTMLButtonElement;
+            const valueCreate: HTMLInputElement = document.getElementById('create-item-value') as HTMLInputElement;
+            const nonValid: HTMLElement|null = document.getElementById('input-error');
+            const servErr: HTMLElement|null = document.getElementById('input-server-error');
 
             if (!valueCreate.value) {
                 btnItemCreate.setAttribute('disabled', 'disabled');
             }
 
-            valueCreate.oninput = () :void => {
+            valueCreate.oninput = (): void => {
                 if (valueCreate.value[0] === ' ') {
                     valueCreate.value = '';
                 }
             };
 
-            valueCreate.onchange = () :void => {
-                if (this.categorysIncome.find(i => i.title === valueCreate.value)) {
+            valueCreate.onchange = (): void => {
+                if (this.categorysIncome.find((i: IncomeType): boolean => i.title === valueCreate.value)) {
                     btnItemCreate.setAttribute('disabled', 'disabled');
                     valueCreate.style.border = '2px solid red';
                     servErr!.style.display = 'block';
@@ -234,16 +245,19 @@ export class Income {
 
             btnCancelCreate.onclick = () => this.cancelFunc();
 
-            btnItemCreate.onclick = async () : Promise<void>  => {
+            btnItemCreate.onclick = async (): Promise<void> => {
                 await Inc.createIncome(valueCreate.value.trim().replace(/ +/g, ' '));
-                this.categorysIncome = await Inc.getIncome();
+                const incomeResponse: IncomeResponse = await Inc.getIncome();
+                this.categorysIncome = [incomeResponse];                 
                 this.cancelFunc();
             };
         };
     }
 
     private async updateBalance(): Promise<void> {
-        const getBalance = await Balance.getBalance();
-        document.getElementById('balance')!.innerHTML = `Баланс: <span>${getBalance.balance} $</span>`;
+        const getBalance: BalanceResponse|null = await Balance.getBalance();
+        if(getBalance){
+            document.getElementById('balance')!.innerHTML = `Баланс: <span>${getBalance.balance} $</span>`;
+        }
     }
 }
