@@ -261,7 +261,7 @@ a {
   background-color: transparent;
   padding: 9px 12px;
   text-align: center;
-  margin-right: 20px;
+  //margin-right: 20px;
   border: 1px solid #6c757d;
   border-radius: 4px;
   font-size: 16px;
@@ -497,9 +497,10 @@ option {
   gap: 12px;
 }
 
-.item-btns {
+.tabs{
   display: flex;
   flex-wrap: wrap;
+  gap: 20px;
 }
 
 

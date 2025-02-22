@@ -9,6 +9,7 @@ import {Balance} from "./services/balance";
 import {Main} from "./components/main";
 import {RouteType} from "./types/route.type";
 import {UserInfo} from "./types/userInfo.type";
+import {BalanceResponse} from "./types/balanceResponse.type";
 
 export class Router {
     contentElement: HTMLElement | null;
@@ -81,7 +82,7 @@ export class Router {
                 }
             },
             {
-                route: '#/budget/edit-operation',
+                route: '#/edit-operation',
                 title: 'Редактирование операции',
                 template: 'templates/editOperation.html',
                 navTemplate: 'templates/sidebar.html',
@@ -91,7 +92,7 @@ export class Router {
                 }
             },
             {
-                route: '#/budget/create-operation',
+                route: '#/create-operation',
                 title: 'Создание операции',
                 template: 'templates/createOperation.html',
                 navTemplate: 'templates/sidebar.html',
@@ -110,24 +111,27 @@ export class Router {
             window.location.href = '#/login';
             return;
         }
-
+    
         const newRoute: RouteType | undefined = this.routes.find((item: RouteType): boolean => item.route === urlRoute);
-
         if (!newRoute) {
             window.location.href = '#/login';
             return;
         }
-
-        if (newRoute.navBar && !Auth.getUserInfo()) {
-            window.location.href = '#/login';
-            return;
+    
+        const isLoggedIn: boolean = Auth.getUserInfo() !== null;
+        if (newRoute.navBar && !isLoggedIn) {
+            if(urlRoute !== "#/login" && urlRoute !== "#/signup"){
+                window.location.href = '#/login';
+                return;
+            }
         }
-
+    
         this.contentElement!.innerHTML = await fetch(newRoute.template).then(
             (response: Response) => response.text()
         );
-        this.titleElement!.innerText = newRoute.title;
 
+        this.titleElement!.innerText = newRoute.title;
+    
         if (newRoute.navBar) {
             const wrapper: HTMLDivElement = document.getElementById('wrapper') as HTMLDivElement;
             const sideDiv: HTMLDivElement = document.createElement('div');
@@ -137,42 +141,26 @@ export class Router {
             );
             wrapper.insertBefore(sideDiv, wrapper.firstChild);
         }
-
-        const userInfo: UserInfo|null = Auth.getUserInfo();
-        const getBalance = await Balance.getBalance();
+    
+        const userInfo: UserInfo | null = Auth.getUserInfo();
+        const getBalance: BalanceResponse | null = await Balance.getBalance();
         const accessToken: string | null = localStorage.getItem(Auth.accessTokenKey);
 
-        if (
-            userInfo &&
-            accessToken &&
-            urlRoute !== '#/login' &&
-            urlRoute !== '#/signup'
-        ) {
+        if(userInfo && accessToken && newRoute.route !== '#/login' && newRoute.route !== '#/signup'){
             if(getBalance){
-                this.balanceElement!.innerHTML = `Баланс: <span>${getBalance.balance} $</span>`;
-            } 
-            document.getElementById('fullName')!.innerText = `${userInfo.userName} ${userInfo.userLastName}`;
-        }
-
-        if (urlRoute !== '#/login') {
-            if (urlRoute !== '#/signup') {
-                if (urlRoute === '#/signup') {
-                    return;
+                if (this.balanceElement) { // Проверяем существование элемента
+                    this.balanceElement.innerHTML = `Баланс: <span>${getBalance.balance}</span>`;
                 }
-                if (!accessToken) {
-                    window.location.href = '#/login';
-                    return;
+                // this.balanceElement!.innerHTML = `Баланс: <span>${getBalance.balance}</span>`;
+                const fullName: HTMLElement | null = document.getElementById("fullName");
+                // fullName!.innerHTML = `${userInfo.userName} ${userInfo.userLastName}`;
+                if (fullName) { // Проверяем существование элемента
+                    fullName.innerHTML = `${userInfo.userName} ${userInfo.userLastName}`;
                 }
             }
         }
-
-        const urlRouteExp: "#/category/expense" = '#/category/expense';
-        const urlRoutSign: "#/signup" = '#/signup';
-        if (urlRouteExp && urlRoutSign && !accessToken) {
-            window.location.href = '#/login';
-            return;
-        }
-
+    
         newRoute.load();
     }
+
 }
